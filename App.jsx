@@ -1,27 +1,19 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { clsx } from "clsx"
 import { languages } from "./languages"
 import { getFarewellText, getRandomWord } from "./utils"
 import Confetti from "react-confetti"
 
-/**
- * Backlog:
- * 
- * ✅ Farewell messages in status section
- * ✅ Disable the keyboard when the game is over
- * ✅ Fix a11y issues
- * ✅ Choose a random word from a list of words
- * ✅ Make the New Game button reset the game
- * ✅ Reveal what the word was if the user loses the game
- * ✅ Confetti drop when the user wins
- * 
- * Challenge: 🎊🎊🎊🎊🎊
- */
+
 
 export default function AssemblyEndgame() {
+    const TOTAL_TIME = 1 * 60;
+
     // State values
     const [currentWord, setCurrentWord] = useState(() => getRandomWord())
     const [guessedLetters, setGuessedLetters] = useState([])
+    const [remainingTime, setRemainingTime] = useState(TOTAL_TIME);
+    const [gameOver, setGameOver]  = useState(false);
 
     // Derived values
     const numGuessesLeft = languages.length - 1
@@ -29,13 +21,35 @@ export default function AssemblyEndgame() {
         guessedLetters.filter(letter => !currentWord.includes(letter)).length
     const isGameWon =
         currentWord.split("").every(letter => guessedLetters.includes(letter))
-    const isGameLost = wrongGuessCount >= numGuessesLeft
+    const isGameLost = wrongGuessCount >= numGuessesLeft || gameOver;
     const isGameOver = isGameWon || isGameLost
     const lastGuessedLetter = guessedLetters[guessedLetters.length - 1]
     const isLastGuessIncorrect = lastGuessedLetter && !currentWord.includes(lastGuessedLetter)
 
     // Static values
     const alphabet = "abcdefghijklmnopqrstuvwxyz"
+    
+
+ useEffect(() => {
+    setRemainingTime(TOTAL_TIME);
+    setGameOver(false);
+
+    const id = setInterval(() => {
+      setRemainingTime(prev => {
+        if (prev <= 1) {
+          clearInterval(id);
+          setGameOver(true);       // <-- mark the game over in state
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(id);
+  }, [currentWord]); 
+            
+const minutes = String(Math.floor(remainingTime / 60)).padStart(2, "0");
+const seconds = String(remainingTime % 60).padStart(2, "0");
 
     function addGuessedLetter(letter) {
         setGuessedLetters(prevLetters =>
@@ -148,7 +162,7 @@ export default function AssemblyEndgame() {
                     />
             }
             <header>
-                <h1>Assembly: Endgame 💀</h1>
+                <h1>Assembly: Endgame </h1>
                 <p>Guess the word within 8 attempts to keep the
                 programming world safe from Assembly!</p>
             </header>
@@ -160,6 +174,11 @@ export default function AssemblyEndgame() {
             >
                 {renderGameStatus()}
             </section>
+
+            <section className="attempts">
+                <p>No of attempts left: {numGuessesLeft - wrongGuessCount}</p>
+                <p>Time remaining: {minutes}:{seconds}</p>
+           </section>
 
             <section className="language-chips">
                 {languageElements}
