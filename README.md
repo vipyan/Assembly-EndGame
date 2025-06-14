@@ -12,6 +12,10 @@ A fun word-guessing game inspired by [Scrimba](https://scrimba.com/frontend-path
 - Accessible and keyboard-friendly UI
 - Built with React and Vite
 
+## Screenshot
+
+![Project Screenshot](./Screenshot.png)
+
 ## How to Play
 
 1. Guess the hidden word by clicking the on-screen keyboard.
