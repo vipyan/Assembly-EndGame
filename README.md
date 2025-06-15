@@ -16,6 +16,11 @@ A fun word-guessing game inspired by [Scrimba](https://scrimba.com/frontend-path
 
 ![Project Screenshot](./Screenshot.png)
 
+## Deployment
+
+The project is deployed at:  
+[https://subtle-melomakarona-e2c73d.netlify.app](https://subtle-melomakarona-e2c73d.netlify.app)
+
 ## How to Play
 
 1. Guess the hidden word by clicking the on-screen keyboard.
